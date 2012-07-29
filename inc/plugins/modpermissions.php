@@ -51,7 +51,7 @@ function modpermissions_info()
 		"website"			=> "http://galaxiesrealm.com/index.php",
 		"author"			=> "Starpaul20",
 		"authorsite"		=> "http://galaxiesrealm.com/index.php",
-		"version"			=> "1.0.1",
+		"version"			=> "1.0.2",
 		"guid"				=> "263e29c9ac7a23ec5c12587de1299fef",
 		"compatibility"		=> "16*"
 	);
@@ -69,6 +69,17 @@ function modpermissions_install()
 	$db->add_column("usergroups", "canbanusers", "int(1) NOT NULL default '1'");
 	$db->add_column("usergroups", "canviewwarnlogs", "int(1) NOT NULL default '1'");
 	$db->add_column("usergroups", "canuseipsearch", "int(1) NOT NULL default '1'");
+
+	// Setting some basic moderator permissions...
+	$update_array = array(
+		"canmanageannounce" => 0,
+		"canviewmodlogs" => 0,
+		"caneditprofiles" => 0,
+		"canbanusers" => 0,
+		"canviewwarnlogs" => 0,
+		"canuseipsearch" => 0
+	);
+	$db->update_query("usergroups", $update_array, "canmodcp != '1'");
 
 	$cache->update_usergroups();
 }
@@ -125,6 +136,8 @@ function modpermissions_uninstall()
 function modpermissions_activate()
 {
 	global $db;
+
+	// Insert templates
 	$insert_array = array(
 		'title'		=> 'modcp_latestfivemodactions',
 		'template'	=> $db->escape_string('<br />
@@ -147,6 +160,7 @@ function modpermissions_activate()
 	);
 	$db->insert_query("templates", $insert_array);
 
+	// Update templates
 	include MYBB_ROOT."/inc/adminfunctions_templates.php";
 	find_replace_templatesets("modcp", "#".preg_quote('<br />
 <table border="0" cellspacing="{$theme[\'borderwidth\']}" cellpadding="{$theme[\'tablespace\']}" class="tborder">
@@ -168,7 +182,7 @@ function modpermissions_activate()
 function modpermissions_deactivate()
 {
 	global $db;
-	$db->delete_query("templates","title IN('modcp_latestfivemodactions')");
+	$db->delete_query("templates", "title IN('modcp_latestfivemodactions')");
 
 	include MYBB_ROOT."/inc/adminfunctions_templates.php";
 	find_replace_templatesets("modcp", "#".preg_quote('{$modlog}')."#i", '<br />
@@ -239,7 +253,7 @@ function modpermissions_usergroups_commit()
 function modpermissions_announcement()
 {
 	global $mybb;
-	if($mybb->usergroup['canmanageannounce'] == 0 && $mybb->usergroup['cancp'] != 1 && $mybb->usergroup['issupermod'] != 1)
+	if($mybb->usergroup['canmanageannounce'] == 0 && $mybb->usergroup['cancp'] != 1)
 	{
 		error_no_permission();
 	}
@@ -249,7 +263,7 @@ function modpermissions_announcement()
 function modpermissions_modlogs()
 {
 	global $mybb;
-	if($mybb->usergroup['canviewmodlogs'] == 0 && $mybb->usergroup['cancp'] != 1 && $mybb->usergroup['issupermod'] != 1)
+	if($mybb->usergroup['canviewmodlogs'] == 0 && $mybb->usergroup['cancp'] != 1)
 	{
 		error_no_permission();
 	}
@@ -259,7 +273,7 @@ function modpermissions_modlogs()
 function modpermissions_profiles()
 {
 	global $mybb;
-	if($mybb->usergroup['caneditprofiles'] == 0 && $mybb->usergroup['cancp'] != 1 && $mybb->usergroup['issupermod'] != 1)
+	if($mybb->usergroup['caneditprofiles'] == 0 && $mybb->usergroup['cancp'] != 1)
 	{
 		error_no_permission();
 	}
@@ -269,7 +283,7 @@ function modpermissions_profiles()
 function modpermissions_ban()
 {
 	global $mybb;
-	if($mybb->usergroup['canbanusers'] == 0 && $mybb->usergroup['cancp'] != 1 && $mybb->usergroup['issupermod'] != 1)
+	if($mybb->usergroup['canbanusers'] == 0 && $mybb->usergroup['cancp'] != 1)
 	{
 		error_no_permission();
 	}
@@ -279,7 +293,7 @@ function modpermissions_ban()
 function modpermissions_warnlogs()
 {
 	global $mybb;
-	if($mybb->usergroup['canviewwarnlogs'] == 0 && $mybb->usergroup['cancp'] != 1 && $mybb->usergroup['issupermod'] != 1)
+	if($mybb->usergroup['canviewwarnlogs'] == 0 && $mybb->usergroup['cancp'] != 1)
 	{
 		error_no_permission();
 	}
@@ -289,7 +303,7 @@ function modpermissions_warnlogs()
 function modpermissions_ipsearch()
 {
 	global $mybb;
-	if($mybb->usergroup['canuseipsearch'] == 0 && $mybb->usergroup['cancp'] != 1 && $mybb->usergroup['issupermod'] != 1)
+	if($mybb->usergroup['canuseipsearch'] == 0 && $mybb->usergroup['cancp'] != 1)
 	{
 		error_no_permission();
 	}
@@ -299,7 +313,7 @@ function modpermissions_ipsearch()
 function modpermissions_modlogs_index()
 {
 	global $db, $mybb, $lang, $templates, $theme, $modlogresults, $modlog;
-	if($mybb->usergroup['canviewmodlogs'] == 1 || $mybb->usergroup['issupermod'] != 0 || $mybb->usergroup['cancp'] != 0)
+	if($mybb->usergroup['canviewmodlogs'] == 1 || $mybb->usergroup['cancp'] != 0)
 	{
 		eval("\$modlog = \"".$templates->get("modcp_latestfivemodactions")."\";");
 	}
