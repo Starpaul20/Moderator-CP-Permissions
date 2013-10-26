@@ -51,7 +51,7 @@ function modpermissions_info()
 		"website"			=> "http://galaxiesrealm.com/index.php",
 		"author"			=> "Starpaul20",
 		"authorsite"		=> "http://galaxiesrealm.com/index.php",
-		"version"			=> "1.0.2",
+		"version"			=> "1.0.3",
 		"guid"				=> "263e29c9ac7a23ec5c12587de1299fef",
 		"compatibility"		=> "16*"
 	);
@@ -205,7 +205,7 @@ function modpermissions_deactivate()
 function modpermissions_usergroups_permission($tabs)
 {
 	global $lang;
-	$lang->load("modpermissions");
+	$lang->load("modpermissions", true);
 
 	$tabs['modcp'] = $lang->mod_cp;
 	return $tabs;
@@ -214,7 +214,7 @@ function modpermissions_usergroups_permission($tabs)
 function modpermissions_usergroups_graph()
 {
 	global $lang, $form, $mybb;
-	$lang->load("modpermissions");
+	$lang->load("modpermissions", true);
 
 	// Mod CP Permissions
 	echo "<div id=\"tab_modcp\">";	
