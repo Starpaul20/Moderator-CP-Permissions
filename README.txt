@@ -1,3 +1,5 @@
+DEPRECATED! Feature has been added in MyBB 1.8.
+
 ## INFORMATION ##
 
 Moderator CP Permissions (1.0.3) for MyBB 1.6
